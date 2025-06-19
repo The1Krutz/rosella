@@ -36,7 +36,7 @@ public partial class MainMenu : Control {
   // Public Functions
   public void OnStartPressed() {
     GD.Print("OnStartPressed");
-    GetTree().ChangeSceneToFile(""); // TODO
+    GetTree().ChangeSceneToPacked(StartScene);
   }
 
   public void OnOptionsPressed() {

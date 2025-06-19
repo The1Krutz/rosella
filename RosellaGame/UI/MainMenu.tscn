@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://cpglajgqjqq05"]
+[gd_scene load_steps=4 format=3 uid="uid://cpglajgqjqq05"]
 
 [ext_resource type="Script" uid="uid://b44o602u5xv3k" path="res://UI/MainMenu.cs" id="1_861xn"]
+[ext_resource type="PackedScene" uid="uid://c1gbw87vg2nbr" path="res://Levels/TestLevel.tscn" id="2_b37jj"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_1hy73"]
 
@@ -13,6 +14,7 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.25, 0.25)
 script = ExtResource("1_861xn")
+StartScene = ExtResource("2_b37jj")
 
 [node name="BackgroundImage" type="Panel" parent="."]
 layout_mode = 1
