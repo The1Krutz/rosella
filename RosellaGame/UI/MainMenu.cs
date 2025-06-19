@@ -12,6 +12,8 @@ public partial class MainMenu : Control {
   // Signals
 
   // Exports
+  [Export]
+  public PackedScene StartScene;
 
   // Public Fields
 
