@@ -89,9 +89,9 @@ public partial class Player : CharacterBody2D {
   public void OnSpriteAnimationFinished() {
     switch (Sprite.Animation) {
       case "jump_end":
-      case "jump_start":
         AnimationLocked = false;
         break;
+      case "jump_start":
       case "jump_double":
         Sprite.Play("falling");
         break;

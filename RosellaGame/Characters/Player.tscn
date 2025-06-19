@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://yr86ol7cl14a"]
+[gd_scene load_steps=35 format=3 uid="uid://yr86ol7cl14a"]
 
 [ext_resource type="Script" uid="uid://6hdtyaigydrt" path="res://Characters/Player.cs" id="1_kpjcp"]
 [ext_resource type="Texture2D" uid="uid://c4g7ppc73c8av" path="res://Assets/Legacy-Fantasy - High Forest 2.3/Character/Idle/Idle-Sheet.png" id="1_xhfnw"]
@@ -33,10 +33,6 @@ region = Rect2(128, 0, 64, 64)
 [sub_resource type="AtlasTexture" id="AtlasTexture_7pihf"]
 atlas = ExtResource("1_xhfnw")
 region = Rect2(192, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_icbm8"]
-atlas = ExtResource("4_55lj8")
-region = Rect2(64, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j4b6j"]
 atlas = ExtResource("4_55lj8")
@@ -153,9 +149,6 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_icbm8")
-}, {
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_j4b6j")
 }, {
 "duration": 1.0,
@@ -248,7 +241,7 @@ script = ExtResource("1_kpjcp")
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 position = Vector2(-32, -64)
 sprite_frames = SubResource("SpriteFrames_55lj8")
-animation = &"falling"
+animation = &"jump_double"
 autoplay = "idle"
 centered = false
 
