@@ -169,7 +169,7 @@ dotnet_diagnostic.RS2008.severity = none
 
 # IDE0073: File header
 dotnet_diagnostic.IDE0073.severity = suggestion
-file_header_template = SPDX-FileCopyrightText: 2024 The1Krutz <the1krutz@gmail.com>\nSPDX-License-Identifier: MIT
+file_header_template = SPDX-FileCopyrightText: The1Krutz <the1krutz@gmail.com>\nSPDX-License-Identifier: MIT
 
 # IDE0035: Remove unreachable code
 dotnet_diagnostic.IDE0035.severity = warning
