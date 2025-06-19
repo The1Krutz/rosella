@@ -117,7 +117,7 @@ dotnet_naming_symbols.static_fields.required_modifiers = static
 dotnet_naming_style.static_field_style.capitalization = camel_case
 dotnet_naming_style.static_field_style.required_prefix = s_
 
-# Instance fields are camelCase
+# Instance fields are PascalCase
 dotnet_naming_rule.instance_fields_should_be_pascal_case.severity = suggestion
 dotnet_naming_rule.instance_fields_should_be_pascal_case.symbols = instance_fields
 dotnet_naming_rule.instance_fields_should_be_pascal_case.style = instance_field_style
