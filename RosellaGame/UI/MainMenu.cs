@@ -41,6 +41,7 @@ public partial class MainMenu : Control {
 
   public void OnOptionsPressed() {
     GD.Print("OnOptionsPressed");
+    // TODO - do options menu stuff when the time comes
   }
 
   public void OnExitPressed() {

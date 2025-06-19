@@ -6,10 +6,38 @@ using System;
 
 namespace RosellaGame;
 
+/// <summary>
+/// template
+/// </summary>
 public partial class Player : CharacterBody2D {
-  public const float Speed = 300.0f;
-  public const float JumpVelocity = -400.0f;
+  // Signals
 
+  // Exports
+  [Export]
+  public float Speed = 200.0f;
+
+  [Export]
+  public float JumpVelocity = -300.0f;
+
+  // Public Fields
+
+  // Backing Fields
+
+  // Private Fields
+
+  // Constructor
+
+  // Lifecycle Hooks
+
+  // Called when the node enters the scene tree for the first time.
+  public override void _Ready() {
+  }
+
+  // Called every frame. 'delta' is the elapsed time since the previous frame.
+  public override void _Process(double delta) {
+  }
+
+  // Called every frame. 'delta' is the elapsed time since the previous frame.
   public override void _PhysicsProcess(double delta) {
     Vector2 velocity = Velocity;
 
@@ -35,4 +63,7 @@ public partial class Player : CharacterBody2D {
     Velocity = velocity;
     MoveAndSlide();
   }
+  // Public Functions
+
+  // Private Functions
 }
