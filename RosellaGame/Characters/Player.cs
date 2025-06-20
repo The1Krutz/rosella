@@ -29,6 +29,7 @@ public partial class Player : CharacterBody2D {
   private Vector2 Direction = Vector2.Zero;
   private bool WasInAir;
   private bool IsDead;
+  private int DefaultSpriteHeight = -24;
 
   // Constructor
 
@@ -127,9 +128,7 @@ public partial class Player : CharacterBody2D {
     Sprite.Play("death");
 
     // slide the sprite down a bit because the death sprites are a little higher
-    Vector2 temp = Sprite.Position;
-    temp.Y = -48;
-    Sprite.Position = temp;
+    SetSpriteHeight(-16);
 
     IsDead = true;
   }
@@ -138,8 +137,12 @@ public partial class Player : CharacterBody2D {
     switch (Sprite.Animation) {
       case "jump_end":
         AnimationLocked = false;
+        SetSpriteHeight(DefaultSpriteHeight);
         break;
       case "jump_start":
+        SetSpriteHeight(DefaultSpriteHeight);
+        Sprite.Play("falling");
+        break;
       case "jump_double":
         Sprite.Play("falling");
         break;
@@ -169,11 +172,13 @@ public partial class Player : CharacterBody2D {
 
   private void Jump(ref Vector2 velocity) {
     velocity.Y = JumpVelocity;
+    SetSpriteHeight(-32);
     Sprite.Play("jump_start");
     AnimationLocked = true;
   }
 
   private void Land() {
+    SetSpriteHeight(-32);
     Sprite.Play("jump_end");
     AnimationLocked = true;
     WasInAir = false;
@@ -184,5 +189,11 @@ public partial class Player : CharacterBody2D {
     velocity.Y = DoubleJumpVelocity;
     Sprite.Play("jump_double");
     AnimationLocked = true;
+  }
+
+  private void SetSpriteHeight(int height) {
+    Vector2 temp = Sprite.Position;
+    temp.Y = height;
+    Sprite.Position = temp;
   }
 }

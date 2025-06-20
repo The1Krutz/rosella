@@ -52,7 +52,7 @@ public partial class Health : Node {
       Die();
     }
 
-    GD.Print($"took {damage} damage, have {CurrentHealth} ({percent}%) health remaining");
+    GD.Print($"took {damage} damage, have {CurrentHealth} ({percent * 100}%) health remaining");
 
     return damage;
   }
