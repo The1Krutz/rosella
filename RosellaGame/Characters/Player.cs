@@ -28,6 +28,7 @@ public partial class Player : CharacterBody2D {
   private bool AnimationLocked;
   private Vector2 Direction = Vector2.Zero;
   private bool WasInAir;
+  private bool IsDead;
 
   // Constructor
 
@@ -44,7 +45,18 @@ public partial class Player : CharacterBody2D {
 
   // Called every frame. 'delta' is the elapsed time since the previous frame.
   public override void _PhysicsProcess(double delta) {
-    var velocity = Velocity;
+    Vector2 velocity = Velocity;
+
+    if (IsDead) {
+      // apply gravity so we don't die in midair
+      if (!IsOnFloor()) {
+        velocity += GetGravity() * (float)delta;
+      }
+
+      Velocity = velocity;
+      MoveAndSlide();
+      return;
+    }
 
     // Add the gravity.
     if (!IsOnFloor()) {
@@ -83,6 +95,34 @@ public partial class Player : CharacterBody2D {
   }
 
   // Public Functions
+  public void OnHealthChanged(float oldHealth, float currentHealth) {
+    float change = currentHealth - oldHealth;
+
+    if (change < 0) {
+      // took damage
+      // TODO - do knockback, hitsparks, etc
+      GD.Print($"took {change} damage");
+    } else if (change > 0) {
+      // took healing
+      // TODO - healspark? Is that a word?
+      GD.Print($"took {change} healing");
+    }
+  }
+
+  public void OnHealthDepleted() {
+    GD.Print("unit dead");
+    // TODO - death animation
+    Sprite.Play("death");
+
+    Vector2 temp = Sprite.Position;
+    temp.Y = -48;
+    Sprite.Position = temp;
+
+
+    // Sprite.Transform.Y = -48;
+    IsDead = true;
+  }
+
   public void OnSpriteAnimationFinished() {
     switch (Sprite.Animation) {
       case "jump_end":

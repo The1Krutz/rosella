@@ -20,7 +20,7 @@ public partial class Health : Node {
 
   // Public Fields
 
-  [Export] public float MaxHealth;
+  [Export] public float MaxHealth = 100.0f;
   public float CurrentHealth;
 
   // Backing Fields
@@ -45,17 +45,21 @@ public partial class Health : Node {
   public float TakeDamage(float damage) {
     float oldHealth = CurrentHealth;
     CurrentHealth -= damage;
-    EmitSignal(nameof(HealthChangedEventHandler), oldHealth, CurrentHealth);
+    EmitSignal(SignalName.HealthChanged, oldHealth, CurrentHealth);
 
     if (CurrentHealth <= 0) {
       Die();
     }
+
+    GD.Print($"took {damage} damage, have {CurrentHealth} health remaining");
 
     return damage;
   }
 
   // Private Functions
   private void Die() {
-    EmitSignal(nameof(HealthDepletedEventHandler));
+    GD.Print("health ran out, now we die");
+
+    EmitSignal(SignalName.HealthDepleted);
   }
 }
