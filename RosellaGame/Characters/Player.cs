@@ -3,7 +3,7 @@
 
 using Godot;
 
-namespace RosellaGame;
+namespace RosellaGame.Characters;
 
 /// <summary>
 /// template
@@ -12,14 +12,11 @@ public partial class Player : CharacterBody2D {
   // Signals
 
   // Exports
-  [Export]
-  public float Speed = 200.0f;
+  [Export] public float Speed = 200.0f;
 
-  [Export]
-  public float JumpVelocity = -300.0f;
+  [Export] public float JumpVelocity = -300.0f;
 
-  [Export]
-  public float DoubleJumpVelocity = -200.0f;
+  [Export] public float DoubleJumpVelocity = -200.0f;
 
   // Public Fields
 
@@ -31,6 +28,7 @@ public partial class Player : CharacterBody2D {
   private bool AnimationLocked;
   private Vector2 Direction = Vector2.Zero;
   private bool WasInAir;
+  private bool IsDead;
 
   // Constructor
 
@@ -48,6 +46,18 @@ public partial class Player : CharacterBody2D {
   // Called every frame. 'delta' is the elapsed time since the previous frame.
   public override void _PhysicsProcess(double delta) {
     Vector2 velocity = Velocity;
+
+    // ripe for refactor to remove duplication of gravity-related code
+    if (IsDead) {
+      // apply gravity so we don't die in midair
+      if (!IsOnFloor()) {
+        velocity += GetGravity() * (float)delta;
+      }
+
+      Velocity = velocity;
+      MoveAndSlide();
+      return;
+    }
 
     // Add the gravity.
     if (!IsOnFloor()) {
@@ -86,6 +96,43 @@ public partial class Player : CharacterBody2D {
   }
 
   // Public Functions
+  /// <summary>
+  /// Manages the player's response to health changes. The actual numbers are all managed inside the health node. This
+  /// is for doing knockbacks, hitsparks, displaying damage numbers, etc
+  /// </summary>
+  /// <param name="oldHealth">health total before this change</param>
+  /// <param name="currentHealth">current health value</param>
+  public void OnHealthChanged(float oldHealth, float currentHealth) {
+    float change = currentHealth - oldHealth;
+
+    if (change < 0) {
+      // took damage
+      // TODO - do knockback, hitsparks, etc
+      GD.Print($"took {change} damage");
+    } else if (change > 0) {
+      // took healing
+      // TODO - healspark? Is that a word?
+      GD.Print($"took {change} healing");
+    }
+  }
+
+  /// <summary>
+  /// Manages the player's response to running out of health. The Health node manages this and lets us know when we're
+  /// dead. This is for playing death animations, etc
+  /// </summary>
+  public void OnHealthDepleted() {
+    GD.Print("unit dead");
+    // TODO - death animation
+    Sprite.Play("death");
+
+    // slide the sprite down a bit because the death sprites are a little higher
+    Vector2 temp = Sprite.Position;
+    temp.Y = -48;
+    Sprite.Position = temp;
+
+    IsDead = true;
+  }
+
   public void OnSpriteAnimationFinished() {
     switch (Sprite.Animation) {
       case "jump_end":
@@ -100,12 +147,14 @@ public partial class Player : CharacterBody2D {
 
   // Private Functions
   private void UpdateAnimation() {
-    if (!AnimationLocked) {
-      if (Direction.X != 0) {
-        Sprite.Play("run");
-      } else {
-        Sprite.Play("idle");
-      }
+    if (AnimationLocked) {
+      return;
+    }
+
+    if (Direction.X != 0) {
+      Sprite.Play("run");
+    } else {
+      Sprite.Play("idle");
     }
   }
 
