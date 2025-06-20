@@ -44,6 +44,9 @@ public partial class Health : Node {
   /// <returns></returns>
   public float TakeDamage(float damage) {
     float oldHealth = CurrentHealth;
+    
+    // TODO - resistances go here
+    
     CurrentHealth -= damage;
     EmitSignal(SignalName.HealthChanged, oldHealth, CurrentHealth);
 
@@ -57,6 +60,9 @@ public partial class Health : Node {
   }
 
   // Private Functions
+  /// <summary>
+  /// We've run out of health, now we signal up that this unit is dead. The owner will handle everything else
+  /// </summary>
   private void Die() {
     GD.Print("health ran out, now we die");
 

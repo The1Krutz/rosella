@@ -33,11 +33,15 @@ public partial class DamageArea : Area2D {
     if (area.Owner.HasNode("Health")) {
       Health health = area.Owner.GetNode<Health>("Health");
       health.TakeDamage(Damage);
+      
+      // TODO - hit sounds, maybe hitsparks too?
     }
   }
 
   public void OnAreaExited(Area2D area) {
     GD.Print($"DamageArea.OnAreaExited {area.Name}");
+    // TODO - use this eventually for things like persistent damage areas. Ie: if you stand in the fire it should keep
+    // burning you every few seconds, etc
   }
 
   // Private Functions

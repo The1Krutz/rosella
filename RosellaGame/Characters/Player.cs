@@ -47,6 +47,7 @@ public partial class Player : CharacterBody2D {
   public override void _PhysicsProcess(double delta) {
     Vector2 velocity = Velocity;
 
+    // ripe for refactor to remove duplication of gravity-related code
     if (IsDead) {
       // apply gravity so we don't die in midair
       if (!IsOnFloor()) {
@@ -95,6 +96,12 @@ public partial class Player : CharacterBody2D {
   }
 
   // Public Functions
+  /// <summary>
+  /// Manages the player's response to health changes. The actual numbers are all managed inside the health node. This
+  /// is for doing knockbacks, hitsparks, displaying damage numbers, etc
+  /// </summary>
+  /// <param name="oldHealth">health total before this change</param>
+  /// <param name="currentHealth">current health value</param>
   public void OnHealthChanged(float oldHealth, float currentHealth) {
     float change = currentHealth - oldHealth;
 
@@ -109,17 +116,20 @@ public partial class Player : CharacterBody2D {
     }
   }
 
+  /// <summary>
+  /// Manages the player's response to running out of health. The Health node manages this and lets us know when we're
+  /// dead. This is for playing death animations, etc
+  /// </summary>
   public void OnHealthDepleted() {
     GD.Print("unit dead");
     // TODO - death animation
     Sprite.Play("death");
 
+    // slide the sprite down a bit because the death sprites are a little higher
     Vector2 temp = Sprite.Position;
     temp.Y = -48;
     Sprite.Position = temp;
 
-
-    // Sprite.Transform.Y = -48;
     IsDead = true;
   }
 
