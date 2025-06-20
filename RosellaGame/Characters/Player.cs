@@ -3,7 +3,7 @@
 
 using Godot;
 
-namespace RosellaGame;
+namespace RosellaGame.Characters;
 
 /// <summary>
 /// template
@@ -12,14 +12,11 @@ public partial class Player : CharacterBody2D {
   // Signals
 
   // Exports
-  [Export]
-  public float Speed = 200.0f;
+  [Export] public float Speed = 200.0f;
 
-  [Export]
-  public float JumpVelocity = -300.0f;
+  [Export] public float JumpVelocity = -300.0f;
 
-  [Export]
-  public float DoubleJumpVelocity = -200.0f;
+  [Export] public float DoubleJumpVelocity = -200.0f;
 
   // Public Fields
 
@@ -47,7 +44,7 @@ public partial class Player : CharacterBody2D {
 
   // Called every frame. 'delta' is the elapsed time since the previous frame.
   public override void _PhysicsProcess(double delta) {
-    Vector2 velocity = Velocity;
+    var velocity = Velocity;
 
     // Add the gravity.
     if (!IsOnFloor()) {
@@ -100,12 +97,14 @@ public partial class Player : CharacterBody2D {
 
   // Private Functions
   private void UpdateAnimation() {
-    if (!AnimationLocked) {
-      if (Direction.X != 0) {
-        Sprite.Play("run");
-      } else {
-        Sprite.Play("idle");
-      }
+    if (AnimationLocked) {
+      return;
+    }
+
+    if (Direction.X != 0) {
+      Sprite.Play("run");
+    } else {
+      Sprite.Play("idle");
     }
   }
 

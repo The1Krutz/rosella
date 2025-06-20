@@ -3,7 +3,7 @@
 
 using Godot;
 
-namespace RosellaGame;
+namespace RosellaGame.UI;
 
 /// <summary>
 /// template
@@ -12,8 +12,7 @@ public partial class MainMenu : Control {
   // Signals
 
   // Exports
-  [Export]
-  public PackedScene StartScene;
+  [Export] public PackedScene StartScene;
 
   // Public Fields
 
