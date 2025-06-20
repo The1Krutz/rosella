@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 using Godot;
+using RosellaGame.Components;
 
 namespace RosellaGame.Characters;
 
@@ -18,6 +19,8 @@ public partial class Player : CharacterBody2D {
 
   [Export] public float DoubleJumpVelocity = -200.0f;
 
+  [Export] public float Damage = 50.0f;
+
   // Public Fields
 
   // Backing Fields
@@ -31,6 +34,7 @@ public partial class Player : CharacterBody2D {
   private bool IsDead;
   private int DefaultSpriteHeight = -24;
   private bool IsAttacking;
+  private CollisionShape2D HitboxAttack1;
 
   // Constructor
 
@@ -39,6 +43,7 @@ public partial class Player : CharacterBody2D {
   // Called when the node enters the scene tree for the first time.
   public override void _Ready() {
     Sprite = GetNode<AnimatedSprite2D>("Sprite");
+    HitboxAttack1 = GetNode<CollisionShape2D>("Hitbox/CollisionShape2D");
   }
 
   // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -154,9 +159,30 @@ public partial class Player : CharacterBody2D {
       case "attack1":
         AnimationLocked = false;
         IsAttacking = false;
+        HitboxAttack1.Disabled = true;
         break;
     }
   }
+
+  // TODO - generify this
+  public void OnHitboxEntered(Area2D area) {
+    GD.Print($"Player.OnHitboxEntered {area.Name}, {area.Owner}");
+
+    Health health;
+    // The health node can be a child of the area or the area owner, depending. We have to check for both.
+    if (area.Owner.HasNode("Health")) {
+      health = area.Owner.GetNode<Health>("Health");
+    } else if (area.HasNode("Health")) {
+      health = area.GetNode<Health>("Health");
+    } else {
+      return;
+    }
+
+    health.TakeDamage(Damage);
+
+    // TODO - hit sounds, maybe hitsparks too?
+  }
+
 
   // Private Functions
   private void UpdateAnimation() {
@@ -173,9 +199,12 @@ public partial class Player : CharacterBody2D {
 
   private void UpdateFacing() {
     if (Direction.X < 0) {
+      // flip the sprite and also the attack hitbox
       Sprite.FlipH = true;
+      UpdateHitboxPosition(-25);
     } else if (Direction.X > 0) {
       Sprite.FlipH = false;
+      UpdateHitboxPosition(25);
     }
   }
 
@@ -206,6 +235,12 @@ public partial class Player : CharacterBody2D {
     Sprite.Position = temp;
   }
 
+  private void UpdateHitboxPosition(float x) {
+    Vector2 hbp = HitboxAttack1.Position;
+    hbp.X = x;
+    HitboxAttack1.Position = hbp;
+  }
+
   private void Attack() {
     if (IsAttacking || AnimationLocked) {
       return;
@@ -215,6 +250,7 @@ public partial class Player : CharacterBody2D {
     Sprite.Play("attack1");
     AnimationLocked = true;
     IsAttacking = true;
-    // TODO - activate hitbox
+
+    HitboxAttack1.Disabled = false;
   }
 }

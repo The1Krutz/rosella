@@ -22,10 +22,13 @@ region = Rect2(64, 288, 32, 32)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_or0ki"]
 size = Vector2(24, 32)
 
-[node name="Destructible" type="Area2D"]
+[node name="Destructible" type="Area2D" node_paths=PackedStringArray("SpriteIntact", "SpriteDamaged", "SpriteDestroyed")]
 collision_layer = 2
 collision_mask = 2
 script = ExtResource("1_1ynn4")
+SpriteIntact = NodePath("SpriteIntact")
+SpriteDamaged = NodePath("SpriteDamaged")
+SpriteDestroyed = NodePath("SpriteDestroyed")
 
 [node name="SpriteIntact" type="Sprite2D" parent="."]
 position = Vector2(0, -16)
@@ -46,7 +49,7 @@ position = Vector2(0, -16)
 shape = SubResource("RectangleShape2D_or0ki")
 
 [node name="Health" parent="." instance=ExtResource("2_1ynn4")]
-MaxHealth = 50.0
+MaxHealth = 75.0
 
 [connection signal="HealthChanged" from="Health" to="." method="OnHealthChanged"]
 [connection signal="HealthDepleted" from="Health" to="." method="OnHealthDepleted"]

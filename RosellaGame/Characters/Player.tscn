@@ -1,4 +1,4 @@
-[gd_scene load_steps=51 format=3 uid="uid://yr86ol7cl14a"]
+[gd_scene load_steps=52 format=3 uid="uid://yr86ol7cl14a"]
 
 [ext_resource type="Script" uid="uid://6hdtyaigydrt" path="res://Characters/Player.cs" id="1_kpjcp"]
 [ext_resource type="Texture2D" uid="uid://c4g7ppc73c8av" path="res://Assets/Legacy-Fantasy - High Forest 2.3/Character/Idle/Idle-Sheet.png" id="1_xhfnw"]
@@ -332,8 +332,12 @@ animations = [{
 radius = 8.0
 height = 46.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_55lj8"]
-radius = 23.0217
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_7pihf"]
+height = 42.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_c3bgu"]
+radius = 13.0
+height = 62.0
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_kpjcp")
@@ -343,8 +347,7 @@ position = Vector2(0, -24)
 sprite_frames = SubResource("SpriteFrames_55lj8")
 animation = &"attack1"
 autoplay = "idle"
-frame = 3
-frame_progress = 1.0
+frame = 1
 
 [node name="PhysicsShape" type="CollisionShape2D" parent="."]
 position = Vector2(0, -23)
@@ -355,11 +358,21 @@ collision_layer = 2
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
-position = Vector2(0, -23)
-shape = SubResource("CircleShape2D_55lj8")
+position = Vector2(1, -24)
+shape = SubResource("CapsuleShape2D_7pihf")
 
 [node name="Health" parent="." instance=ExtResource("6_55lj8")]
+
+[node name="Hitbox" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+position = Vector2(25, -36)
+shape = SubResource("CapsuleShape2D_c3bgu")
+disabled = true
 
 [connection signal="animation_finished" from="Sprite" to="." method="OnSpriteAnimationFinished"]
 [connection signal="HealthChanged" from="Health" to="." method="OnHealthChanged"]
 [connection signal="HealthDepleted" from="Health" to="." method="OnHealthDepleted"]
+[connection signal="area_entered" from="Hitbox" to="." method="OnHitboxEntered"]
