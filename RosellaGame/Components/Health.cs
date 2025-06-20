@@ -11,7 +11,7 @@ namespace RosellaGame.Components;
 public partial class Health : Node {
   // Signals
   [Signal]
-  public delegate void HealthChangedEventHandler(float oldHealth, float newHealth);
+  public delegate void HealthChangedEventHandler(float newHealth, float change, float percent);
 
   [Signal]
   public delegate void HealthDepletedEventHandler();
@@ -43,18 +43,16 @@ public partial class Health : Node {
   /// <param name="damage"></param>
   /// <returns></returns>
   public float TakeDamage(float damage) {
-    float oldHealth = CurrentHealth;
-    
     // TODO - resistances go here
-    
     CurrentHealth -= damage;
-    EmitSignal(SignalName.HealthChanged, oldHealth, CurrentHealth);
+    float percent = CurrentHealth / MaxHealth;
+    EmitSignal(SignalName.HealthChanged, CurrentHealth, damage, percent);
 
     if (CurrentHealth <= 0) {
       Die();
     }
 
-    GD.Print($"took {damage} damage, have {CurrentHealth} health remaining");
+    GD.Print($"took {damage} damage, have {CurrentHealth} ({percent}%) health remaining");
 
     return damage;
   }

@@ -100,11 +100,10 @@ public partial class Player : CharacterBody2D {
   /// Manages the player's response to health changes. The actual numbers are all managed inside the health node. This
   /// is for doing knockbacks, hitsparks, displaying damage numbers, etc
   /// </summary>
-  /// <param name="oldHealth">health total before this change</param>
-  /// <param name="currentHealth">current health value</param>
-  public void OnHealthChanged(float oldHealth, float currentHealth) {
-    float change = currentHealth - oldHealth;
-
+  /// <param name="newHealth">current health value</param>
+  /// <param name="change">amount the health changed</param>
+  /// <param name="percent">percent of total health remaining after this change</param>
+  public void OnHealthChanged(float newHealth, float change, float percent) {
     if (change < 0) {
       // took damage
       // TODO - do knockback, hitsparks, etc
@@ -114,6 +113,8 @@ public partial class Player : CharacterBody2D {
       // TODO - healspark? Is that a word?
       GD.Print($"took {change} healing");
     }
+
+    // TODO - probably need to emit the new health total for ui stuff, but not right now
   }
 
   /// <summary>
