@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://b1mxoaf52b83" path="res://Assets/Legacy-Fantasy - High Forest 2.3/Debug Map/Assets/Tiles.png" id="1_45wjk"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gy00f"]
-size = Vector2(32, 8)
+size = Vector2(64, 8)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6xxok"]
 atlas = ExtResource("1_45wjk")
@@ -32,6 +32,14 @@ shape = SubResource("RectangleShape2D_gy00f")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 position = Vector2(-8, -8)
+sprite_frames = SubResource("SpriteFrames_wtv84")
+
+[node name="Sprite3" type="AnimatedSprite2D" parent="."]
+position = Vector2(-24, -8)
+sprite_frames = SubResource("SpriteFrames_wtv84")
+
+[node name="Sprite4" type="AnimatedSprite2D" parent="."]
+position = Vector2(24, -8)
 sprite_frames = SubResource("SpriteFrames_wtv84")
 
 [node name="Sprite2" type="AnimatedSprite2D" parent="."]

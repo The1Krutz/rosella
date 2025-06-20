@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 using Godot;
+using RosellaGame.Components;
 
 namespace RosellaGame.Characters;
 
@@ -18,6 +19,8 @@ public partial class Player : CharacterBody2D {
 
   [Export] public float DoubleJumpVelocity = -200.0f;
 
+  [Export] public float Damage = 50.0f;
+
   // Public Fields
 
   // Backing Fields
@@ -29,6 +32,9 @@ public partial class Player : CharacterBody2D {
   private Vector2 Direction = Vector2.Zero;
   private bool WasInAir;
   private bool IsDead;
+  private int DefaultSpriteHeight = -24;
+  private bool IsAttacking;
+  private CollisionShape2D HitboxAttack1;
 
   // Constructor
 
@@ -37,6 +43,7 @@ public partial class Player : CharacterBody2D {
   // Called when the node enters the scene tree for the first time.
   public override void _Ready() {
     Sprite = GetNode<AnimatedSprite2D>("Sprite");
+    HitboxAttack1 = GetNode<CollisionShape2D>("Hitbox/CollisionShape2D");
   }
 
   // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -81,12 +88,16 @@ public partial class Player : CharacterBody2D {
     }
 
     // Get the input direction and handle the movement/deceleration.
-    // As good practice, you should replace UI actions with custom gameplay actions.
     Direction = Input.GetVector("move_left", "move_right", "move_up", "move_down");
     if (Direction != Vector2.Zero) {
       velocity.X = Direction.X * Speed;
     } else {
       velocity.X = Mathf.MoveToward(Velocity.X, 0, Speed);
+    }
+
+
+    if (Input.IsActionJustPressed("attack1")) {
+      Attack();
     }
 
     Velocity = velocity;
@@ -100,11 +111,10 @@ public partial class Player : CharacterBody2D {
   /// Manages the player's response to health changes. The actual numbers are all managed inside the health node. This
   /// is for doing knockbacks, hitsparks, displaying damage numbers, etc
   /// </summary>
-  /// <param name="oldHealth">health total before this change</param>
-  /// <param name="currentHealth">current health value</param>
-  public void OnHealthChanged(float oldHealth, float currentHealth) {
-    float change = currentHealth - oldHealth;
-
+  /// <param name="newHealth">current health value</param>
+  /// <param name="change">amount the health changed</param>
+  /// <param name="percent">percent of total health remaining after this change</param>
+  public void OnHealthChanged(float newHealth, float change, float percent) {
     if (change < 0) {
       // took damage
       // TODO - do knockback, hitsparks, etc
@@ -114,6 +124,8 @@ public partial class Player : CharacterBody2D {
       // TODO - healspark? Is that a word?
       GD.Print($"took {change} healing");
     }
+
+    // TODO - probably need to emit the new health total for ui stuff, but not right now
   }
 
   /// <summary>
@@ -126,9 +138,7 @@ public partial class Player : CharacterBody2D {
     Sprite.Play("death");
 
     // slide the sprite down a bit because the death sprites are a little higher
-    Vector2 temp = Sprite.Position;
-    temp.Y = -48;
-    Sprite.Position = temp;
+    SetSpriteHeight(-16);
 
     IsDead = true;
   }
@@ -137,13 +147,42 @@ public partial class Player : CharacterBody2D {
     switch (Sprite.Animation) {
       case "jump_end":
         AnimationLocked = false;
+        SetSpriteHeight(DefaultSpriteHeight);
         break;
       case "jump_start":
+        SetSpriteHeight(DefaultSpriteHeight);
+        Sprite.Play("falling");
+        break;
       case "jump_double":
         Sprite.Play("falling");
         break;
+      case "attack1":
+        AnimationLocked = false;
+        IsAttacking = false;
+        HitboxAttack1.Disabled = true;
+        break;
     }
   }
+
+  // TODO - generify this
+  public void OnHitboxEntered(Area2D area) {
+    GD.Print($"Player.OnHitboxEntered {area.Name}, {area.Owner}");
+
+    Health health;
+    // The health node can be a child of the area or the area owner, depending. We have to check for both.
+    if (area.Owner.HasNode("Health")) {
+      health = area.Owner.GetNode<Health>("Health");
+    } else if (area.HasNode("Health")) {
+      health = area.GetNode<Health>("Health");
+    } else {
+      return;
+    }
+
+    health.TakeDamage(Damage);
+
+    // TODO - hit sounds, maybe hitsparks too?
+  }
+
 
   // Private Functions
   private void UpdateAnimation() {
@@ -160,19 +199,24 @@ public partial class Player : CharacterBody2D {
 
   private void UpdateFacing() {
     if (Direction.X < 0) {
+      // flip the sprite and also the attack hitbox
       Sprite.FlipH = true;
+      UpdateHitboxPosition(-25);
     } else if (Direction.X > 0) {
       Sprite.FlipH = false;
+      UpdateHitboxPosition(25);
     }
   }
 
   private void Jump(ref Vector2 velocity) {
     velocity.Y = JumpVelocity;
+    SetSpriteHeight(-32);
     Sprite.Play("jump_start");
     AnimationLocked = true;
   }
 
   private void Land() {
+    SetSpriteHeight(-32);
     Sprite.Play("jump_end");
     AnimationLocked = true;
     WasInAir = false;
@@ -183,5 +227,30 @@ public partial class Player : CharacterBody2D {
     velocity.Y = DoubleJumpVelocity;
     Sprite.Play("jump_double");
     AnimationLocked = true;
+  }
+
+  private void SetSpriteHeight(int height) {
+    Vector2 temp = Sprite.Position;
+    temp.Y = height;
+    Sprite.Position = temp;
+  }
+
+  private void UpdateHitboxPosition(float x) {
+    Vector2 hbp = HitboxAttack1.Position;
+    hbp.X = x;
+    HitboxAttack1.Position = hbp;
+  }
+
+  private void Attack() {
+    if (IsAttacking || AnimationLocked) {
+      return;
+    }
+
+    SetSpriteHeight(DefaultSpriteHeight);
+    Sprite.Play("attack1");
+    AnimationLocked = true;
+    IsAttacking = true;
+
+    HitboxAttack1.Disabled = false;
   }
 }
