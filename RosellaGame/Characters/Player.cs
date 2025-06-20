@@ -30,6 +30,7 @@ public partial class Player : CharacterBody2D {
   private bool WasInAir;
   private bool IsDead;
   private int DefaultSpriteHeight = -24;
+  private bool IsAttacking;
 
   // Constructor
 
@@ -82,12 +83,16 @@ public partial class Player : CharacterBody2D {
     }
 
     // Get the input direction and handle the movement/deceleration.
-    // As good practice, you should replace UI actions with custom gameplay actions.
     Direction = Input.GetVector("move_left", "move_right", "move_up", "move_down");
     if (Direction != Vector2.Zero) {
       velocity.X = Direction.X * Speed;
     } else {
       velocity.X = Mathf.MoveToward(Velocity.X, 0, Speed);
+    }
+
+
+    if (Input.IsActionJustPressed("attack1")) {
+      Attack();
     }
 
     Velocity = velocity;
@@ -146,6 +151,10 @@ public partial class Player : CharacterBody2D {
       case "jump_double":
         Sprite.Play("falling");
         break;
+      case "attack1":
+        AnimationLocked = false;
+        IsAttacking = false;
+        break;
     }
   }
 
@@ -195,5 +204,17 @@ public partial class Player : CharacterBody2D {
     Vector2 temp = Sprite.Position;
     temp.Y = height;
     Sprite.Position = temp;
+  }
+
+  private void Attack() {
+    if (IsAttacking || AnimationLocked) {
+      return;
+    }
+
+    SetSpriteHeight(DefaultSpriteHeight);
+    Sprite.Play("attack1");
+    AnimationLocked = true;
+    IsAttacking = true;
+    // TODO - activate hitbox
   }
 }

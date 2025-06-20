@@ -339,11 +339,12 @@ radius = 23.0217
 script = ExtResource("1_kpjcp")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
-position = Vector2(0, -32)
+position = Vector2(0, -24)
 sprite_frames = SubResource("SpriteFrames_55lj8")
-animation = &"run"
+animation = &"attack1"
 autoplay = "idle"
-frame_progress = 0.460315
+frame = 3
+frame_progress = 1.0
 
 [node name="PhysicsShape" type="CollisionShape2D" parent="."]
 position = Vector2(0, -23)
