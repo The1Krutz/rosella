@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 using Godot;
+using RosellaGame.Types;
 
 namespace RosellaGame.Components;
 
@@ -11,7 +12,7 @@ namespace RosellaGame.Components;
 public partial class Health : Node {
   // Signals
   [Signal]
-  public delegate void HealthChangedEventHandler(float newHealth, float change, float percent);
+  public delegate void HealthChangedEventHandler(float newHealth, Damage change, float percent);
 
   [Signal]
   public delegate void HealthDepletedEventHandler();
@@ -40,11 +41,11 @@ public partial class Health : Node {
   /// Applies damage to the unit
   /// Returns the amount of damage that was actually dealt (in case of resistances, etc)
   /// </summary>
-  /// <param name="damage"></param>
-  /// <returns></returns>
-  public float TakeDamage(float damage) {
-    // TODO - resistances go here
-    CurrentHealth -= damage;
+  /// <param name="damage">Amount and type of the incoming damage</param>
+  /// <returns>Amount and type of damage that was actually applied. Used to indicate to the caller that resistances affected their hit</returns>
+  public Damage TakeDamage(Damage damage) {
+    // TODO - resistances go here, eventually
+    CurrentHealth -= damage.Amount;
     float percent = CurrentHealth / MaxHealth;
     EmitSignal(SignalName.HealthChanged, CurrentHealth, damage, percent);
 
@@ -52,8 +53,9 @@ public partial class Health : Node {
       Die();
     }
 
-    GD.Print($"took {damage} damage, have {CurrentHealth} ({percent * 100}%) health remaining");
+    GD.Print($"took {damage.Amount} {damage.Type} damage, have {CurrentHealth} ({percent * 100}%) health remaining");
 
+    // TODO - should probably return the damage _after_ resistances, so the caller can tell if their hit was affected
     return damage;
   }
 

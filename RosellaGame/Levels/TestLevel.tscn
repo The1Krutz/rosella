@@ -553,7 +553,6 @@ drag_bottom_margin = 0.1
 
 [node name="DamageArea" parent="." instance=ExtResource("3_y1yrn")]
 position = Vector2(112, 112)
-Damage = 60.0
 
 [node name="Destructible" parent="." instance=ExtResource("4_jyvk6")]
 position = Vector2(-112, 96)

@@ -1,5 +1,6 @@
 using Godot;
 using RosellaGame.Components;
+using RosellaGame.Types;
 
 namespace RosellaGame;
 
@@ -10,9 +11,11 @@ public partial class DamageArea : Area2D {
   // Signals
 
   // Exports
-  [Export] public float Damage = 10.0f;
+  [Export] public float DamageAmount;
+  [Export] public DamageType DamageType;
 
   // Public Fields
+  public Damage Damage = new();
 
   // Backing Fields
 
@@ -25,6 +28,9 @@ public partial class DamageArea : Area2D {
   // Called when the node enters the scene tree for the first time.
   public override void _Ready() {
     GD.Print("DamageArea ready");
+
+    Damage.Amount = DamageAmount;
+    Damage.Type = DamageType;
   }
 
   // Public Functions
@@ -33,7 +39,7 @@ public partial class DamageArea : Area2D {
     if (area.Owner.HasNode("Health")) {
       Health health = area.Owner.GetNode<Health>("Health");
       health.TakeDamage(Damage);
-      
+
       // TODO - hit sounds, maybe hitsparks too?
     }
   }

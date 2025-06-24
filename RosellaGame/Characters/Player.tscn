@@ -341,13 +341,14 @@ height = 62.0
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_kpjcp")
+DamageAmount = 50.0
+DamageType = 2
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -24)
 sprite_frames = SubResource("SpriteFrames_55lj8")
-animation = &"attack1"
+animation = &"idle"
 autoplay = "idle"
-frame = 1
 
 [node name="PhysicsShape" type="CollisionShape2D" parent="."]
 position = Vector2(0, -23)
