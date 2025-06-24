@@ -3,6 +3,7 @@
 
 using Godot;
 using RosellaGame.Components;
+using RosellaGame.Types;
 
 namespace RosellaGame.Characters;
 
@@ -19,9 +20,11 @@ public partial class Player : CharacterBody2D {
 
   [Export] public float DoubleJumpVelocity = -200.0f;
 
-  [Export] public float Damage = 50.0f;
+  [Export] public float DamageAmount;
+  [Export] public DamageType DamageType;
 
   // Public Fields
+  public Damage Damage = new();
 
   // Backing Fields
 
@@ -44,6 +47,9 @@ public partial class Player : CharacterBody2D {
   public override void _Ready() {
     Sprite = GetNode<AnimatedSprite2D>("Sprite");
     HitboxAttack1 = GetNode<CollisionShape2D>("Hitbox/CollisionShape2D");
+
+    Damage.Amount = DamageAmount;
+    Damage.Type = DamageType;
   }
 
   // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -114,15 +120,15 @@ public partial class Player : CharacterBody2D {
   /// <param name="newHealth">current health value</param>
   /// <param name="change">amount the health changed</param>
   /// <param name="percent">percent of total health remaining after this change</param>
-  public void OnHealthChanged(float newHealth, float change, float percent) {
-    if (change < 0) {
+  public void OnHealthChanged(float newHealth, Damage change, float percent) {
+    if (change.Amount < 0) {
       // took damage
       // TODO - do knockback, hitsparks, etc
-      GD.Print($"took {change} damage");
-    } else if (change > 0) {
+      GD.Print($"took {change.Amount} damage");
+    } else if (change.Amount > 0) {
       // took healing
       // TODO - healspark? Is that a word?
-      GD.Print($"took {change} healing");
+      GD.Print($"took {change.Amount} healing");
     }
 
     // TODO - probably need to emit the new health total for ui stuff, but not right now
