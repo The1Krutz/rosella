@@ -10,9 +10,12 @@ public partial class AirState : State {
   // Signals
 
   // Exports
-  [Export] public GroundState GroundState;
+  [Export] public LandingState LandingState;
   [Export] public float DoubleJumpVelocity = -200.0f;
   [Export] public int MaxDoubleJumps = 1;
+  [Export] public string JumpEndAnimation = "jump_end";
+  [Export] public string JumpDoubleAnimation = "jump_double";
+  [Export] public string JumpLoopAnimation = "jump_loop";
 
   // Public Fields
 
@@ -28,7 +31,7 @@ public partial class AirState : State {
 
   // Lifecycle Hooks
   public override void OnExit() {
-    if (NextState is GroundState) {
+    if (NextState is LandingState) {
       // only restore double jumps when the player lands
       DoubleJumpsRemaining = MaxDoubleJumps;
     }
@@ -36,7 +39,9 @@ public partial class AirState : State {
 
   public override void StatePhysicsProcess(double delta) {
     if (Character.IsOnFloor()) {
-      NextState = GroundState;
+      NextState = LandingState;
+
+      AnimationStateMachine.Travel(JumpEndAnimation);
     }
   }
 
@@ -57,6 +62,8 @@ public partial class AirState : State {
       velocity.Y = DoubleJumpVelocity;
 
       Character.Velocity = velocity;
+
+      AnimationStateMachine.Travel(JumpDoubleAnimation);
     }
   }
 }

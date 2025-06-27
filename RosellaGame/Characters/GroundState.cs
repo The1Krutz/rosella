@@ -12,6 +12,7 @@ public partial class GroundState : State {
   // Exports
   [Export] public float JumpVelocity = -300.0f;
   [Export] public AirState AirState;
+  [Export] public string JumpAnimationName = "jump_start";
 
   // Public Fields
 
@@ -38,13 +39,21 @@ public partial class GroundState : State {
       Jump();
     }
   }
-  
+
+  public override void StatePhysicsProcess(double delta) {
+    if (!Character.IsOnFloor()) {
+      NextState = AirState;
+    }
+  }
+
   public void Jump() {
     Vector2 velocity = Character.Velocity;
     velocity.Y = JumpVelocity;
 
     Character.Velocity = velocity;
     NextState = AirState;
+
+    AnimationStateMachine.Travel(JumpAnimationName);
   }
 
   // Private Functions

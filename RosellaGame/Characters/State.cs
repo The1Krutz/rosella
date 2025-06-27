@@ -15,6 +15,7 @@ public partial class State : Node {
   // Public Fields
   public CharacterBody2D Character;
   public State NextState;
+  public AnimationNodeStateMachinePlayback AnimationStateMachine;
 
   // Backing Fields
 
@@ -23,12 +24,12 @@ public partial class State : Node {
   // Constructor
 
   // Lifecycle Hooks
-  
+
   // Public Functions
   public virtual void StateInput(InputEvent @event) {
     // GD.Print("State.StateInput : " + @event);
   }
-  
+
   public virtual void StatePhysicsProcess(double delta) {
     // GD.Print("State.StateProcess : " + @event);
   }

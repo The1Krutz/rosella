@@ -12,6 +12,7 @@ public partial class CharacterStateMachine : Node {
   // Exports
   [Export] public State CurrentState;
   [Export] public CharacterBody2D Character;
+  [Export] public AnimationTree AnimationTree;
 
   // Public Fields
   public List<State> States = new();
@@ -53,6 +54,7 @@ public partial class CharacterStateMachine : Node {
       if (child is State state) {
         // give the states what they need to work
         state.Character = Character;
+        state.AnimationStateMachine = (AnimationNodeStateMachinePlayback)AnimationTree.Get("parameters/playback");
 
         // add to states list
         States.Add(state);

@@ -10,6 +10,8 @@ public partial class LandingState : State {
   // Signals
 
   // Exports
+  [Export] public string LandingAnimationName = "jump_end";
+  [Export] public GroundState GroundState;
 
   // Public Fields
 
@@ -21,15 +23,12 @@ public partial class LandingState : State {
 
   // Lifecycle Hooks
 
-  // Called when the node enters the scene tree for the first time.
-  public override void _Ready() {
-  }
-
-  // Called every frame. 'delta' is the elapsed time since the previous frame.
-  public override void _Process(double delta) {
-  }
-
   // Public Functions
+  public void OnAnimationTreeAnimationFinished(string name) {
+    if (name == LandingAnimationName) {
+      NextState = GroundState;
+    }
+  }
 
-  // Private Functions
+// Private Functions
 }
