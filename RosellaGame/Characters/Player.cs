@@ -113,7 +113,7 @@ public partial class Player : CharacterBody2D {
 
     Velocity = velocity;
     MoveAndSlide();
-    UpdateAnimation();
+    UpdateAnimationParameters();
     UpdateFacing();
   }
 
@@ -196,7 +196,7 @@ public partial class Player : CharacterBody2D {
 
 
   // Private Functions
-  private void UpdateAnimation() {
+  private void UpdateAnimationParameters() {
     AnimTree.Set("parameters/Move/blend_position", Direction.X);
 
 
