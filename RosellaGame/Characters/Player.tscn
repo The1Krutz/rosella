@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=3 uid="uid://yr86ol7cl14a"]
+[gd_scene load_steps=39 format=3 uid="uid://yr86ol7cl14a"]
 
 [ext_resource type="Script" uid="uid://6hdtyaigydrt" path="res://Characters/Player.cs" id="1_kpjcp"]
 [ext_resource type="Texture2D" uid="uid://c4g7ppc73c8av" path="res://Assets/Legacy-Fantasy - High Forest 2.3/Character/Idle/Idle-Sheet.png" id="1_xhfnw"]
@@ -8,7 +8,9 @@
 [ext_resource type="Script" uid="uid://c83pf0yl8fm3a" path="res://Characters/StateDebugLabel.cs" id="9_c3bgu"]
 [ext_resource type="Script" uid="uid://c0ji2n3wx1345" path="res://Characters/CharacterStateMachine.cs" id="9_o8u7c"]
 [ext_resource type="Script" uid="uid://t466oskcyury" path="res://Characters/GroundState.cs" id="10_lli6r"]
+[ext_resource type="Script" uid="uid://b8irjl71bhf3n" path="res://Characters/DeathState.cs" id="10_o8u7c"]
 [ext_resource type="Script" uid="uid://dewmx55cxk0of" path="res://Characters/AirState.cs" id="11_7wf5q"]
+[ext_resource type="Script" uid="uid://cawiclpqblkvb" path="res://Characters/AttackState.cs" id="11_lli6r"]
 [ext_resource type="Script" uid="uid://c2vchauedfu2x" path="res://Characters/LandingState.cs" id="12_r52jx"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_y1jsw"]
@@ -383,8 +385,6 @@ graph_offset = Vector2(-586, -224)
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_kpjcp")
-DamageAmount = 50.0
-DamageType = 2
 
 [node name="PhysicsShape" type="CollisionShape2D" parent="."]
 position = Vector2(0, -23)
@@ -440,6 +440,16 @@ LandingState = NodePath("../Landing")
 [node name="Landing" type="Node" parent="CharacterStateMachine" node_paths=PackedStringArray("GroundState")]
 script = ExtResource("12_r52jx")
 GroundState = NodePath("../Ground")
+
+[node name="Death" type="Node" parent="CharacterStateMachine"]
+script = ExtResource("10_o8u7c")
+CanMove = false
+
+[node name="Attack" type="Node" parent="CharacterStateMachine"]
+script = ExtResource("11_lli6r")
+DamageAmount = 55.0
+DamageType = 2
+CanMove = false
 
 [node name="StateDebugLabel" type="Label" parent="." node_paths=PackedStringArray("StateMachine")]
 offset_left = -64.0

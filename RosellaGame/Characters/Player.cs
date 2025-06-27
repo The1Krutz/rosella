@@ -16,23 +16,15 @@ public partial class Player : CharacterBody2D {
   // Exports
   [Export] public float Speed = 200.0f;
 
-  [Export] public float DamageAmount;
-  [Export] public DamageType DamageType;
-
   // Public Fields
-  public Damage Damage = new();
 
   // Backing Fields
 
   // Private Fields
   private Sprite2D Sprite;
   private AnimationTree AnimTree;
-  private bool AnimationLocked;
   private Vector2 Direction = Vector2.Zero;
   private bool IsDead;
-  private int DefaultSpriteHeight = -24;
-  private bool IsAttacking;
-  private CollisionShape2D HitboxAttack1;
   private CharacterStateMachine StateMachine;
 
   // Constructor
@@ -43,12 +35,8 @@ public partial class Player : CharacterBody2D {
   public override void _Ready() {
     // setup references, @onready, etc
     Sprite = GetNode<Sprite2D>("Sprite2D");
-    HitboxAttack1 = GetNode<CollisionShape2D>("Hitbox/CollisionShape2D");
     AnimTree = GetNode<AnimationTree>("AnimationTree");
     StateMachine = GetNode<CharacterStateMachine>("CharacterStateMachine");
-
-    Damage.Amount = DamageAmount;
-    Damage.Type = DamageType;
 
     // set scene defaults
     AnimTree.Active = true;
@@ -83,10 +71,6 @@ public partial class Player : CharacterBody2D {
       velocity.X = Mathf.MoveToward(Velocity.X, 0, Speed);
     }
 
-
-    if (Input.IsActionJustPressed("attack1")) {
-      Attack();
-    }
 
     Velocity = velocity;
     MoveAndSlide();
@@ -145,7 +129,7 @@ public partial class Player : CharacterBody2D {
       return;
     }
 
-    health.TakeDamage(Damage);
+    // health.TakeDamage(Damage);
 
     // TODO - hit sounds, maybe hitsparks too?
   }
@@ -160,28 +144,8 @@ public partial class Player : CharacterBody2D {
     if (Direction.X < 0) {
       // flip the sprite and also the attack hitbox
       Sprite.FlipH = true;
-      UpdateHitboxPosition(-25);
     } else if (Direction.X > 0) {
       Sprite.FlipH = false;
-      UpdateHitboxPosition(25);
     }
-  }
-
-  private void UpdateHitboxPosition(float x) {
-    Vector2 hbp = HitboxAttack1.Position;
-    hbp.X = x;
-    HitboxAttack1.Position = hbp;
-  }
-
-  private void Attack() {
-    if (IsAttacking) {
-      return;
-    }
-
-    // SetSpriteHeight(DefaultSpriteHeight);
-    // Sprite.Play("attack1");
-    IsAttacking = true;
-
-    HitboxAttack1.Disabled = false;
   }
 }
