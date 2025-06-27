@@ -16,10 +16,6 @@ public partial class Player : CharacterBody2D {
   // Exports
   [Export] public float Speed = 200.0f;
 
-  [Export] public float JumpVelocity = -300.0f;
-
-  [Export] public float DoubleJumpVelocity = -200.0f;
-
   [Export] public float DamageAmount;
   [Export] public DamageType DamageType;
 
@@ -29,15 +25,15 @@ public partial class Player : CharacterBody2D {
   // Backing Fields
 
   // Private Fields
-  private int DoubleJumpsRemaining = 1;
-  private AnimatedSprite2D Sprite;
+  private Sprite2D Sprite;
+  private AnimationTree AnimTree;
   private bool AnimationLocked;
   private Vector2 Direction = Vector2.Zero;
-  private bool WasInAir;
   private bool IsDead;
   private int DefaultSpriteHeight = -24;
   private bool IsAttacking;
   private CollisionShape2D HitboxAttack1;
+  private CharacterStateMachine StateMachine;
 
   // Constructor
 
@@ -45,15 +41,17 @@ public partial class Player : CharacterBody2D {
 
   // Called when the node enters the scene tree for the first time.
   public override void _Ready() {
-    Sprite = GetNode<AnimatedSprite2D>("Sprite");
+    // setup references, @onready, etc
+    Sprite = GetNode<Sprite2D>("Sprite2D");
     HitboxAttack1 = GetNode<CollisionShape2D>("Hitbox/CollisionShape2D");
+    AnimTree = GetNode<AnimationTree>("AnimationTree");
+    StateMachine = GetNode<CharacterStateMachine>("CharacterStateMachine");
 
     Damage.Amount = DamageAmount;
     Damage.Type = DamageType;
-  }
 
-  // Called every frame. 'delta' is the elapsed time since the previous frame.
-  public override void _Process(double delta) {
+    // set scene defaults
+    AnimTree.Active = true;
   }
 
   // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -75,27 +73,11 @@ public partial class Player : CharacterBody2D {
     // Add the gravity.
     if (!IsOnFloor()) {
       velocity += GetGravity() * (float)delta;
-      WasInAir = true;
-    } else {
-      // Restore double jump when player touches ground
-      DoubleJumpsRemaining = 1;
-      if (WasInAir) {
-        Land();
-      }
-    }
-
-    // Handle Jump.
-    if (Input.IsActionJustPressed("jump")) {
-      if (IsOnFloor()) {
-        Jump(ref velocity);
-      } else if (DoubleJumpsRemaining > 0) {
-        DoubleJump(ref velocity);
-      }
     }
 
     // Get the input direction and handle the movement/deceleration.
     Direction = Input.GetVector("move_left", "move_right", "move_up", "move_down");
-    if (Direction != Vector2.Zero) {
+    if (Direction != Vector2.Zero && StateMachine.CanMove()) {
       velocity.X = Direction.X * Speed;
     } else {
       velocity.X = Mathf.MoveToward(Velocity.X, 0, Speed);
@@ -108,7 +90,7 @@ public partial class Player : CharacterBody2D {
 
     Velocity = velocity;
     MoveAndSlide();
-    UpdateAnimation();
+    UpdateAnimationParameters();
     UpdateFacing();
   }
 
@@ -141,33 +123,12 @@ public partial class Player : CharacterBody2D {
   public void OnHealthDepleted() {
     GD.Print("unit dead");
     // TODO - death animation
-    Sprite.Play("death");
+    // Sprite.Play("death");
 
     // slide the sprite down a bit because the death sprites are a little higher
-    SetSpriteHeight(-16);
+    // SetSpriteHeight(-16);
 
     IsDead = true;
-  }
-
-  public void OnSpriteAnimationFinished() {
-    switch (Sprite.Animation) {
-      case "jump_end":
-        AnimationLocked = false;
-        SetSpriteHeight(DefaultSpriteHeight);
-        break;
-      case "jump_start":
-        SetSpriteHeight(DefaultSpriteHeight);
-        Sprite.Play("falling");
-        break;
-      case "jump_double":
-        Sprite.Play("falling");
-        break;
-      case "attack1":
-        AnimationLocked = false;
-        IsAttacking = false;
-        HitboxAttack1.Disabled = true;
-        break;
-    }
   }
 
   // TODO - generify this
@@ -191,16 +152,8 @@ public partial class Player : CharacterBody2D {
 
 
   // Private Functions
-  private void UpdateAnimation() {
-    if (AnimationLocked) {
-      return;
-    }
-
-    if (Direction.X != 0) {
-      Sprite.Play("run");
-    } else {
-      Sprite.Play("idle");
-    }
+  private void UpdateAnimationParameters() {
+    AnimTree.Set("parameters/Move/blend_position", Direction.X);
   }
 
   private void UpdateFacing() {
@@ -214,33 +167,6 @@ public partial class Player : CharacterBody2D {
     }
   }
 
-  private void Jump(ref Vector2 velocity) {
-    velocity.Y = JumpVelocity;
-    SetSpriteHeight(-32);
-    Sprite.Play("jump_start");
-    AnimationLocked = true;
-  }
-
-  private void Land() {
-    SetSpriteHeight(-32);
-    Sprite.Play("jump_end");
-    AnimationLocked = true;
-    WasInAir = false;
-  }
-
-  private void DoubleJump(ref Vector2 velocity) {
-    DoubleJumpsRemaining--;
-    velocity.Y = DoubleJumpVelocity;
-    Sprite.Play("jump_double");
-    AnimationLocked = true;
-  }
-
-  private void SetSpriteHeight(int height) {
-    Vector2 temp = Sprite.Position;
-    temp.Y = height;
-    Sprite.Position = temp;
-  }
-
   private void UpdateHitboxPosition(float x) {
     Vector2 hbp = HitboxAttack1.Position;
     hbp.X = x;
@@ -248,13 +174,12 @@ public partial class Player : CharacterBody2D {
   }
 
   private void Attack() {
-    if (IsAttacking || AnimationLocked) {
+    if (IsAttacking) {
       return;
     }
 
-    SetSpriteHeight(DefaultSpriteHeight);
-    Sprite.Play("attack1");
-    AnimationLocked = true;
+    // SetSpriteHeight(DefaultSpriteHeight);
+    // Sprite.Play("attack1");
     IsAttacking = true;
 
     HitboxAttack1.Disabled = false;
