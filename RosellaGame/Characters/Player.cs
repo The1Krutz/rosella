@@ -47,17 +47,11 @@ public partial class Player : CharacterBody2D {
     AnimTree = GetNode<AnimationTree>("AnimationTree");
     StateMachine = GetNode<CharacterStateMachine>("CharacterStateMachine");
 
-    GD.Print("Player::_AnimationTree", AnimTree);
-
     Damage.Amount = DamageAmount;
     Damage.Type = DamageType;
 
     // set scene defaults
     AnimTree.Active = true;
-  }
-
-  // Called every frame. 'delta' is the elapsed time since the previous frame.
-  public override void _Process(double delta) {
   }
 
   // Called every frame. 'delta' is the elapsed time since the previous frame.

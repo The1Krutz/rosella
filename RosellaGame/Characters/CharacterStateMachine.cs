@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: The1Krutz <the1krutz@gmail.com>
+// SPDX-License-Identifier: MIT
+
 using System.Collections.Generic;
 using Godot;
 
@@ -15,11 +18,11 @@ public partial class CharacterStateMachine : Node {
   [Export] public AnimationTree AnimationTree;
 
   // Public Fields
-  public List<State> States = new();
 
   // Backing Fields
 
   // Private Fields
+  private List<State> States = [];
 
   // Constructor
 
