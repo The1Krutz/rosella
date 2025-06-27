@@ -16,6 +16,8 @@ public partial class AttackState : State {
   [Export] public float DamageAmount;
   [Export] public DamageType DamageType;
   [Export] public CollisionShape2D HitboxAttack1;
+  [Export] public string AttackAnimationName = "attack1";
+  [Export] public GroundState GroundState;
 
 
   // Public Fields
@@ -24,39 +26,30 @@ public partial class AttackState : State {
   // Backing Fields
 
   // Private Fields
-  private bool IsAttacking;
 
   // Constructor
 
   // Lifecycle Hooks
   public override void _Ready() {
-    
-    
     Damage.Amount = DamageAmount;
     Damage.Type = DamageType;
   }
 
-  public override void StateInput(InputEvent @event) {
-    if (@event.IsActionPressed("attack1")) {
-      Attack();
-    }
+  public override void OnEnter() {
+    AnimationStateMachine.Travel("attack1");
+    HitboxAttack1.Disabled = false;
   }
 
   // Public Functions
+  public void OnAnimationTreeAnimationFinished(string name) {
+    if (name == AttackAnimationName) {
+      HitboxAttack1.Disabled = true;
+      NextState = GroundState;
+    }
+  }
 
   // Private Functions
 
-  private void Attack() {
-    if (IsAttacking) {
-      return;
-    }
-
-    // Sprite.Play("attack1");
-    IsAttacking = true;
-
-    HitboxAttack1.Disabled = false;
-  }
-  
   // TODO - make this work
   private void UpdateFacing() {
     // if (Character.Direction.X < 0) {

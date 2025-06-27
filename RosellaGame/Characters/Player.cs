@@ -133,8 +133,7 @@ public partial class Player : CharacterBody2D {
 
     // TODO - hit sounds, maybe hitsparks too?
   }
-
-
+  
   // Private Functions
   private void UpdateAnimationParameters() {
     AnimTree.Set("parameters/Move/blend_position", Direction.X);
