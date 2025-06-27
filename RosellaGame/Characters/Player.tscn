@@ -440,7 +440,6 @@ LandingState = NodePath("../Landing")
 [node name="Landing" type="Node" parent="CharacterStateMachine" node_paths=PackedStringArray("GroundState")]
 script = ExtResource("12_r52jx")
 GroundState = NodePath("../Ground")
-CanMove = false
 
 [node name="StateDebugLabel" type="Label" parent="." node_paths=PackedStringArray("StateMachine")]
 offset_left = -64.0

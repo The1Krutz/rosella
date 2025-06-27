@@ -26,18 +26,9 @@ public partial class GroundState : State {
 
   // Lifecycle Hooks
 
-  // Called when the node enters the scene tree for the first time.
-  public override void _Ready() {
-  }
-
-  // Called every frame. 'delta' is the elapsed time since the previous frame.
-  public override void _Process(double delta) {
-  }
-
   // Public Functions
   public override void StateInput(InputEvent @event) {
     if (@event.IsActionPressed("jump")) {
-      GD.Print("GroundState.JumpPressed");
       Jump();
     }
   }
@@ -48,7 +39,8 @@ public partial class GroundState : State {
     }
   }
 
-  public void Jump() {
+  // Private Functions
+  private void Jump() {
     Vector2 velocity = Character.Velocity;
     velocity.Y = JumpVelocity;
 
@@ -57,6 +49,4 @@ public partial class GroundState : State {
 
     AnimationStateMachine.Travel(JumpAnimationName);
   }
-
-  // Private Functions
 }
