@@ -49,7 +49,6 @@ public partial class AirState : State {
 
   public override void StateInput(InputEvent @event) {
     if (@event.IsActionPressed("jump")) {
-      GD.Print("AirState.JumpPressed");
       DoubleJump();
     }
   }

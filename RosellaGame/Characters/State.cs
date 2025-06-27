@@ -35,11 +35,11 @@ public partial class State : Node {
   }
 
   public virtual void OnEnter() {
-    GD.Print("State.OnEnter");
+    // GD.Print("State.OnEnter");
   }
 
   public virtual void OnExit() {
-    GD.Print("State.OnExit");
+    // GD.Print("State.OnExit");
   }
 
   // Private Functions
