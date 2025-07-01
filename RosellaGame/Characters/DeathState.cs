@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: The1Krutz <the1krutz@gmail.com>
+// SPDX-License-Identifier: MIT
+
 using Godot;
 using System;
 

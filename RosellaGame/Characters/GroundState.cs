@@ -14,6 +14,7 @@ public partial class GroundState : State {
   // Exports
   [Export] public float JumpVelocity = -300.0f;
   [Export] public AirState AirState;
+  [Export] public AttackState AttackState;
   [Export] public string JumpAnimationName = "jump_start";
 
   // Public Fields
@@ -30,6 +31,8 @@ public partial class GroundState : State {
   public override void StateInput(InputEvent @event) {
     if (@event.IsActionPressed("jump")) {
       Jump();
+    } else if (@event.IsActionPressed("attack1")) {
+      NextState = AttackState;
     }
   }
 

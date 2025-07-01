@@ -58,6 +58,8 @@ public partial class AirState : State {
   // Private Functions
   private void DoubleJump() {
     if (DoubleJumpsRemaining > 0) {
+      DoubleJumpsRemaining--;
+      
       Vector2 velocity = Character.Velocity;
       velocity.Y = DoubleJumpVelocity;
 
