@@ -16,9 +16,10 @@ public partial class AttackState : State {
   [Export] public float DamageAmount;
   [Export] public DamageType DamageType;
   [Export] public CollisionShape2D HitboxAttack1;
-  [Export] public string AttackAnimationName = "attack1";
-  [Export] public GroundState GroundState;
-
+  [Export] public string Attack1AnimationName = "attack1";
+  [Export] public string Attack2AnimationName = "attack2";
+  [Export] public GroundState ReturnState;
+  [Export] public string ReturnAnimationName = "move";
 
   // Public Fields
   public Damage Damage = new();
@@ -26,6 +27,7 @@ public partial class AttackState : State {
   // Backing Fields
 
   // Private Fields
+  private Godot.Timer ComboTimer;
 
   // Constructor
 
@@ -33,6 +35,8 @@ public partial class AttackState : State {
   public override void _Ready() {
     Damage.Amount = DamageAmount;
     Damage.Type = DamageType;
+
+    ComboTimer = GetNode<Godot.Timer>("Timer");
   }
 
   public override void OnEnter() {
@@ -40,11 +44,29 @@ public partial class AttackState : State {
     HitboxAttack1.Disabled = false;
   }
 
+  public override void StateInput(InputEvent @event) {
+    if (@event.IsActionPressed("attack1")) {
+      ComboTimer.Start();
+    }
+  }
+
   // Public Functions
   public void OnAnimationTreeAnimationFinished(string name) {
-    if (name == AttackAnimationName) {
+    GD.Print("OnAnimationTreeAnimationFinished" + name);
+    if (name == Attack1AnimationName) {
+      if (ComboTimer.IsStopped()) {
+        HitboxAttack1.Disabled = true;
+        NextState = ReturnState;
+        AnimationStateMachine.Travel(ReturnAnimationName);
+      } else {
+        AnimationStateMachine.Travel(Attack2AnimationName);
+      }
+    }
+
+    if (name == Attack2AnimationName) {
       HitboxAttack1.Disabled = true;
-      NextState = GroundState;
+      NextState = ReturnState;
+      AnimationStateMachine.Travel(ReturnAnimationName);
     }
   }
 

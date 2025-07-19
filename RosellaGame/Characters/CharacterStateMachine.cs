@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: The1Krutz <the1krutz@gmail.com>
 // SPDX-License-Identifier: MIT
 
-using System.Collections.Generic;
 using Godot;
 
 namespace RosellaGame.Characters;

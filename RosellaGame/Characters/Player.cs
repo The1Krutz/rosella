@@ -136,7 +136,7 @@ public partial class Player : CharacterBody2D {
   
   // Private Functions
   private void UpdateAnimationParameters() {
-    AnimTree.Set("parameters/Move/blend_position", Direction.X);
+    AnimTree.Set("parameters/move/blend_position", Direction.X);
   }
 
   private void UpdateFacing() {
