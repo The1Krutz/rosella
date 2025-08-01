@@ -35,7 +35,7 @@ public partial class Destructible : Area2D {
   /// <param name="change">amount the health changed</param>
   /// <param name="percent">percent of total health remaining after this change</param>
   public void OnHealthChanged(float newHealth, float change, float percent) {
-    if (change < 0) {
+    if (change > 0) {
       // took damage
       // TODO - do knockback, hitsparks, etc
       GD.Print($"{Name} took {change} damage");

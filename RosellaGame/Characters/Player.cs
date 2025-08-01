@@ -16,24 +16,19 @@ public partial class Player : CharacterBody2D {
   // Exports
   [Export] public float Speed = 200.0f;
 
-  [Export] public float DamageAmount;
-  [Export] public DamageType DamageType;
-
   // Public Fields
-  public Damage Damage = new();
 
   // Backing Fields
 
   // Private Fields
   private Sprite2D Sprite;
   private AnimationTree AnimTree;
-  private bool AnimationLocked;
   private Vector2 Direction = Vector2.Zero;
   private bool IsDead;
-  private int DefaultSpriteHeight = -24;
-  private bool IsAttacking;
-  private CollisionShape2D HitboxAttack1;
   private CharacterStateMachine StateMachine;
+  private Area2D Hitbox;
+  private Vector2 HitboxOriginalLocation;
+  private Vector2 HitboxInvertedLocation;
 
   // Constructor
 
@@ -43,12 +38,11 @@ public partial class Player : CharacterBody2D {
   public override void _Ready() {
     // setup references, @onready, etc
     Sprite = GetNode<Sprite2D>("Sprite2D");
-    HitboxAttack1 = GetNode<CollisionShape2D>("Hitbox/CollisionShape2D");
     AnimTree = GetNode<AnimationTree>("AnimationTree");
     StateMachine = GetNode<CharacterStateMachine>("CharacterStateMachine");
-
-    Damage.Amount = DamageAmount;
-    Damage.Type = DamageType;
+    Hitbox = GetNode<Area2D>("Hitbox");
+    HitboxOriginalLocation = Hitbox.Position;
+    HitboxInvertedLocation = new Vector2(Hitbox.Position.X * -1, Hitbox.Position.Y);
 
     // set scene defaults
     AnimTree.Active = true;
@@ -84,10 +78,6 @@ public partial class Player : CharacterBody2D {
     }
 
 
-    if (Input.IsActionJustPressed("attack1")) {
-      Attack();
-    }
-
     Velocity = velocity;
     MoveAndSlide();
     UpdateAnimationParameters();
@@ -103,11 +93,11 @@ public partial class Player : CharacterBody2D {
   /// <param name="change">amount the health changed</param>
   /// <param name="percent">percent of total health remaining after this change</param>
   public void OnHealthChanged(float newHealth, Damage change, float percent) {
-    if (change.Amount < 0) {
+    if (change.Amount > 0) {
       // took damage
       // TODO - do knockback, hitsparks, etc
       GD.Print($"took {change.Amount} damage");
-    } else if (change.Amount > 0) {
+    } else if (change.Amount < 0) {
       // took healing
       // TODO - healspark? Is that a word?
       GD.Print($"took {change.Amount} healing");
@@ -137,6 +127,7 @@ public partial class Player : CharacterBody2D {
 
     Health health;
     // The health node can be a child of the area or the area owner, depending. We have to check for both.
+    // TODO - fix the weirdness here lol
     if (area.Owner.HasNode("Health")) {
       health = area.Owner.GetNode<Health>("Health");
     } else if (area.HasNode("Health")) {
@@ -145,43 +136,29 @@ public partial class Player : CharacterBody2D {
       return;
     }
 
-    health.TakeDamage(Damage);
+    // fix this to come from the actual weapon
+    health.TakeDamage(new Damage() {
+      Amount = 40.0f,
+      Type = DamageType.Piercing
+    });
 
     // TODO - hit sounds, maybe hitsparks too?
   }
 
-
   // Private Functions
   private void UpdateAnimationParameters() {
-    AnimTree.Set("parameters/Move/blend_position", Direction.X);
+    AnimTree.Set("parameters/move/blend_position", Direction.X);
   }
 
   private void UpdateFacing() {
     if (Direction.X < 0) {
-      // flip the sprite and also the attack hitbox
+      // make evreything face left
       Sprite.FlipH = true;
-      UpdateHitboxPosition(-25);
+      Hitbox.Position = HitboxInvertedLocation;
     } else if (Direction.X > 0) {
+      // make everything face right
       Sprite.FlipH = false;
-      UpdateHitboxPosition(25);
+      Hitbox.Position = HitboxOriginalLocation;
     }
-  }
-
-  private void UpdateHitboxPosition(float x) {
-    Vector2 hbp = HitboxAttack1.Position;
-    hbp.X = x;
-    HitboxAttack1.Position = hbp;
-  }
-
-  private void Attack() {
-    if (IsAttacking) {
-      return;
-    }
-
-    // SetSpriteHeight(DefaultSpriteHeight);
-    // Sprite.Play("attack1");
-    IsAttacking = true;
-
-    HitboxAttack1.Disabled = false;
   }
 }
