@@ -41,7 +41,6 @@ public partial class AttackState : State {
 
   public override void OnEnter() {
     AnimationStateMachine.Travel("attack1");
-    HitboxAttack1.Disabled = false;
   }
 
   public override void StateInput(InputEvent @event) {
@@ -55,7 +54,6 @@ public partial class AttackState : State {
     GD.Print("OnAnimationTreeAnimationFinished" + name);
     if (name == Attack1AnimationName) {
       if (ComboTimer.IsStopped()) {
-        HitboxAttack1.Disabled = true;
         NextState = ReturnState;
         AnimationStateMachine.Travel(ReturnAnimationName);
       } else {
@@ -64,7 +62,6 @@ public partial class AttackState : State {
     }
 
     if (name == Attack2AnimationName) {
-      HitboxAttack1.Disabled = true;
       NextState = ReturnState;
       AnimationStateMachine.Travel(ReturnAnimationName);
     }

@@ -26,6 +26,9 @@ public partial class Player : CharacterBody2D {
   private Vector2 Direction = Vector2.Zero;
   private bool IsDead;
   private CharacterStateMachine StateMachine;
+  private Area2D Hitbox;
+  private Vector2 HitboxOriginalLocation;
+  private Vector2 HitboxInvertedLocation;
 
   // Constructor
 
@@ -37,6 +40,9 @@ public partial class Player : CharacterBody2D {
     Sprite = GetNode<Sprite2D>("Sprite2D");
     AnimTree = GetNode<AnimationTree>("AnimationTree");
     StateMachine = GetNode<CharacterStateMachine>("CharacterStateMachine");
+    Hitbox = GetNode<Area2D>("Hitbox");
+    HitboxOriginalLocation = Hitbox.Position;
+    HitboxInvertedLocation = new Vector2(Hitbox.Position.X * -1, Hitbox.Position.Y);
 
     // set scene defaults
     AnimTree.Active = true;
@@ -87,11 +93,11 @@ public partial class Player : CharacterBody2D {
   /// <param name="change">amount the health changed</param>
   /// <param name="percent">percent of total health remaining after this change</param>
   public void OnHealthChanged(float newHealth, Damage change, float percent) {
-    if (change.Amount < 0) {
+    if (change.Amount > 0) {
       // took damage
       // TODO - do knockback, hitsparks, etc
       GD.Print($"took {change.Amount} damage");
-    } else if (change.Amount > 0) {
+    } else if (change.Amount < 0) {
       // took healing
       // TODO - healspark? Is that a word?
       GD.Print($"took {change.Amount} healing");
@@ -121,6 +127,7 @@ public partial class Player : CharacterBody2D {
 
     Health health;
     // The health node can be a child of the area or the area owner, depending. We have to check for both.
+    // TODO - fix the weirdness here lol
     if (area.Owner.HasNode("Health")) {
       health = area.Owner.GetNode<Health>("Health");
     } else if (area.HasNode("Health")) {
@@ -129,11 +136,15 @@ public partial class Player : CharacterBody2D {
       return;
     }
 
-    // health.TakeDamage(Damage);
+    // fix this to come from the actual weapon
+    health.TakeDamage(new Damage() {
+      Amount = 40.0f,
+      Type = DamageType.Piercing
+    });
 
     // TODO - hit sounds, maybe hitsparks too?
   }
-  
+
   // Private Functions
   private void UpdateAnimationParameters() {
     AnimTree.Set("parameters/move/blend_position", Direction.X);
@@ -141,10 +152,13 @@ public partial class Player : CharacterBody2D {
 
   private void UpdateFacing() {
     if (Direction.X < 0) {
-      // flip the sprite and also the attack hitbox
+      // make evreything face left
       Sprite.FlipH = true;
+      Hitbox.Position = HitboxInvertedLocation;
     } else if (Direction.X > 0) {
+      // make everything face right
       Sprite.FlipH = false;
+      Hitbox.Position = HitboxOriginalLocation;
     }
   }
 }
