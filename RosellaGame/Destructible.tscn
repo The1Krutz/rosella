@@ -44,7 +44,7 @@ visible = false
 position = Vector2(0, -16)
 texture = SubResource("AtlasTexture_8vpre")
 
-[node name="Hurtbox" type="CollisionShape2D" parent="."]
+[node name="ObjectHitbox" type="CollisionShape2D" parent="."]
 position = Vector2(0, -16)
 shape = SubResource("RectangleShape2D_or0ki")
 

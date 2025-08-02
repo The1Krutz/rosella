@@ -40,7 +40,7 @@ public partial class Player : CharacterBody2D {
     Sprite = GetNode<Sprite2D>("Sprite2D");
     AnimTree = GetNode<AnimationTree>("AnimationTree");
     StateMachine = GetNode<CharacterStateMachine>("CharacterStateMachine");
-    Hitbox = GetNode<Area2D>("Hitbox");
+    Hitbox = GetNode<Area2D>("WeaponHitbox");
     HitboxOriginalLocation = Hitbox.Position;
     HitboxInvertedLocation = new Vector2(Hitbox.Position.X * -1, Hitbox.Position.Y);
 
