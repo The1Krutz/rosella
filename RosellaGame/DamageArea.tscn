@@ -28,7 +28,7 @@ script = ExtResource("1_6xxok")
 DamageAmount = 60.0
 DamageType = 1
 
-[node name="Hurtbox" type="CollisionShape2D" parent="."]
+[node name="WeaponHitbox" type="CollisionShape2D" parent="."]
 position = Vector2(0, -4)
 shape = SubResource("RectangleShape2D_gy00f")
 
